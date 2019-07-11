@@ -14,6 +14,8 @@ import todayImage from "../../assets/imgs/today.jpg"
 import CommonStyles from "../CommonStyles"
 import Task from "../components/Task"
 import Icon from "react-native-vector-icons/FontAwesome"
+import ActionButton from "react-native-action-button"
+import AddTask from "../screens/AddTask"
 
 export default class Agenda extends Component {
   state = {
@@ -80,7 +82,21 @@ export default class Agenda extends Component {
       }
     ],
     visibleTasks: [],
-    isDoneTasksVisible: true
+    isDoneTasksVisible: true,
+    isAddTaskVisible: false
+  }
+
+  addTask = task => {
+    const tasks = [
+      ...this.state.tasks,
+      {
+        id: Math.random(),
+        description: task.description,
+        estimatedDate: task.date,
+        doneOn: null
+      }
+    ]
+    this.setState({ tasks, isAddTaskVisible: false }, this.filterTasks)
   }
 
   toogleTask = id => {
@@ -115,6 +131,11 @@ export default class Agenda extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <AddTask
+          isVisible={this.state.isAddTaskVisible}
+          onSave={this.addTask}
+          onCancel={() => this.setState({ isAddTaskVisible: false })}
+        />
         <ImageBackground source={todayImage} style={styles.background}>
           <View style={styles.iconBar}>
             <TouchableOpacity onPress={this.toogleFilter}>
@@ -143,6 +164,10 @@ export default class Agenda extends Component {
             )}
           />
         </View>
+        <ActionButton
+          color={CommonStyles.colors.today}
+          onPress={() => this.setState({ isAddTaskVisible: true })}
+        />
       </View>
     )
   }
